@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      context: ./app
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - tracker-network
+    volumes:
+      - ./shared:/usr/src/app/shared
+
+  api:
+    build:
+      context: ./api
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - tracker-network
+    volumes:
+      - ./shared:/usr/src/api/shared
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: cryptoDB
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432"
+    networks:
+      - tracker-network
+
+volumes:
+  db_data:
+
+networks:
+  tracker-network:
